@@ -2,7 +2,7 @@
   "name": "name",
   "description": "description",
   "authors": "author",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "pathToMain",
   "dependencies": {},
   "scripts": {
