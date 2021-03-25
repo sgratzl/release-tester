@@ -26,7 +26,16 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         version: ${{ steps.extract_version.outputs.version }}
         publish: true
-    - name: Build
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      tag_name: ${{ steps.create_release.outputs.tag_name }}
+
+  build_assets:
+    needs: create_release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Assets
       run: echo TODO
     # - name: Upload Release Asset
     #   id: upload-release-asset
@@ -34,7 +43,23 @@ jobs:
     #   env:
     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     #   with:
-    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     upload_url: ${{ needs.create_release.outputs.upload_url }}
     #     asset_path: ./my-artifact.zip
     #     asset_name: my-artifact.zip
     #     asset_content_type: application/zip
+
+  sync_dev:
+    needs: correct_repository
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Create pull request to dev
+      uses: thomaseizinger/create-pull-request@1.0.0
+      with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          head: main
+          base: dev
+          title: "chore: sync main->dev"
+          body: |
+              sync main -> dev

@@ -11,8 +11,9 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
-    - name: Change version number and name
-      run: npm version ${{ github.event.inputs.versionName }}
+    - name: Change version number
+      run: |
+        npm version --no-git-tag-version ${{ github.event.inputs.versionName }}"
     - name: Extract version
       id: extract_version
       uses: Saionaro/extract-package-version@v1.1.1
@@ -26,7 +27,7 @@ jobs:
       id: make-commit
       run: |
         git add package.json
-        git commit --message "release ${{ steps.extract_version.outputs.version }}"
+        git commit --message "chore: release v${{ steps.extract_version.outputs.version }}"
         echo "::set-output name=commit::$(git rev-parse HEAD)"
     - name: Push new branch
       run: git push origin release/v${{ steps.extract_version.outputs.version }}
@@ -39,18 +40,4 @@ jobs:
        title: Release v${{ steps.extract_version.outputs.version }}
        reviewers: ${{ github.event.issue.user.login }}
        body: |
-           Hi!
-           This PR was created in response workflow running.
-           I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
-    # - name: Create pull request to develop
-    #   uses: thomaseizinger/create-pull-request@1.0.0
-    #   with:
-    #       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #       head: release/v${{ github.event.inputs.versionName }}
-    #       base: develop
-    #       title: v${{ github.event.inputs.versionName }} into develop
-    #       reviewers: ${{ github.event.issue.user.login }}
-    #       body: |
-    #           Hi!
-    #           This PR was created in response workflow running.
-    #           I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
+           Releasing v${{ steps.extract_version.outputs.version }}.
