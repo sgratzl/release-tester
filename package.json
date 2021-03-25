@@ -5,6 +5,11 @@
   "version": "1.0.0",
   "main": "pathToMain",
   "dependencies": {},
+  "scripts": {
+    "lint": "echo no linting",
+    "test": "echo no tests",
+    "build": "echo dummy build"
+  },
   "devDependencies": {
     "prettier": "^2.2.1"
   }
