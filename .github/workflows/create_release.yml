@@ -5,7 +5,7 @@ on:
       versionName:
         description: 'Semantic Version Number (i.e., 5.5.0 or patch, minor, major, prepatch, preminor, premajor, prerelease)'
         required: true
-        default: 'patch'
+        default: patch
 jobs:
   create_release:
     runs-on: ubuntu-latest
@@ -19,13 +19,13 @@ jobs:
         npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
     - name: Create pull request into main
       uses: peter-evans/create-pull-request@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.PAT }}
       with:
-        token: ${{ secrets.PAT }}
         branch: release/${{ steps.version.outputs.next_tag }}
         commit-message: "chore: release ${{ steps.version.outputs.next_tag }}"
         base: main
         title: Release ${{ steps.version.outputs.next_tag }}
-        reviewers: ${{ github.event.issue.user.login }}
         labels: chore
         body: |
             Releasing ${{ steps.version.outputs.next_tag }}.
