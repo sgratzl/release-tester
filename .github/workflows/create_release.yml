@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       versionName:
-        description: 'Semantic Version Number (i.e., 5.5.0 or patch, minor, major, prerelease)'
+        description: 'Semantic Version Number (i.e., 5.5.0 or patch, minor, major, prepatch, preminor, premajor, prerelease)'
         required: true
         default: 'patch'
 jobs:
@@ -13,18 +13,18 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
     - name: Change version number
-      run: npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
-    - name: Extract version
-      id: extract_version
-      uses: Saionaro/extract-package-version@v1.1.1
+      id: version
+      run: |
+        echo -n "::set-output name=next_tag::"
+        npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
     - name: Create pull request into main
       uses: peter-evans/create-pull-request@v3
       with:
-        branch: release/v${{ steps.extract_version.outputs.version }}
-        commit-message: "chore: release v${{ steps.extract_version.outputs.version }}"
+        branch: release/${{ steps.version.outputs.next_tag }}
+        commit-message: "chore: release ${{ steps.version.outputs.next_tag }}"
         base: main
-        title: Release v${{ steps.extract_version.outputs.version }}
+        title: Release ${{ steps.version.outputs.next_tag }}
         reviewers: ${{ github.event.issue.user.login }}
         labels: chore
         body: |
-            Releasing v${{ steps.extract_version.outputs.version }}.
+            Releasing ${{ steps.version.outputs.next_tag }}.
