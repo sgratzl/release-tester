@@ -1,4 +1,4 @@
-name: Create Release Branch
+name: Create Release
 on:
   workflow_dispatch:
     inputs:
@@ -12,8 +12,7 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
     - name: Change version number
-      run: |
-        npm version --no-git-tag-version ${{ github.event.inputs.versionName }}"
+      run: npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
     - name: Extract version
       id: extract_version
       uses: Saionaro/extract-package-version@v1.1.1
