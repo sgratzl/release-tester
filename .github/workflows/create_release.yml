@@ -12,6 +12,12 @@ jobs:
     steps:
     - name: Check out code
       uses: actions/checkout@v2
+      with:
+        ref: main
+    - name: Reset main branch
+      run: |
+        git fetch origin dev:dev
+        git reset --hard dev
     - name: Change version number
       id: version
       run: |
