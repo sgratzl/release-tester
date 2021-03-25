@@ -14,6 +14,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         ref: main
+        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Reset main branch
       run: |
         git fetch origin dev:dev
@@ -25,13 +26,12 @@ jobs:
         npm version --no-git-tag-version ${{ github.event.inputs.versionName }}
     - name: Create pull request into main
       uses: peter-evans/create-pull-request@v3
-      env:
-        GITHUB_TOKEN: ${{ secrets.PAT }}
       with:
         branch: release/${{ steps.version.outputs.next_tag }}
         commit-message: "chore: release ${{ steps.version.outputs.next_tag }}"
         base: main
         title: Release ${{ steps.version.outputs.next_tag }}
         labels: chore
+        reviewers: sgratzl
         body: |
             Releasing ${{ steps.version.outputs.next_tag }}.
